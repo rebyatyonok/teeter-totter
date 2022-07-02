@@ -1,14 +1,20 @@
 <template>
-  <GameVue
-    :is-paused="isPaused"
-  />
+  <Playground v-if="areRulesRead"/>
+
+  <RulesModal v-else @close="markRulesRead()" />
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import GameVue from './components/Game.vue';
 
-const isPaused = ref(false)
+import Playground from './components/Playground.vue';
+import RulesModal from './components/RulesModal.vue';
+
+const areRulesRead = ref(true)
+
+const markRulesRead = () => {
+  areRulesRead.value = true
+}
 </script>
 
 <style>
