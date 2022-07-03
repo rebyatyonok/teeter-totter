@@ -1,11 +1,11 @@
 <template>
   <div class="shape">
     <!-- TODO: dynamic component -->
-    <Triangle v-if="shape === 'triangle'" :color="color" />
-    <Circle v-if="shape === 'circle'" :color="color" />
-    <Rectangle v-if="shape === 'rectangle'" :color="color" />
+    <Triangle v-if="figure.shape === 'triangle'" :color="figure.color" :width="figure.width"/>
+    <Circle v-if="figure.shape === 'circle'" :color="figure.color" :size="figure.width" />
+    <Rectangle v-if="figure.shape === 'rectangle'" :color="figure.color" :size="figure.width" />
 
-    <span class="weight">{{ weight }} kg</span>
+    <span class="weight">{{ figure.weight }} kg</span>
   </div>
 </template>
 
@@ -14,12 +14,10 @@ import Triangle from './_generic/Triangle.vue';
 import Rectangle from './_generic/Rectangle.vue';
 import Circle from './_generic/Circle.vue';
 
-import { shapes } from '../types';
+import { Figure } from '../classes/figure';
 
 const props = defineProps<{
-  shape: typeof shapes[number],
-  weight: number
-  color?: string,
+  figure: Figure
 }>()
 </script>
 

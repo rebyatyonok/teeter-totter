@@ -1,52 +1,63 @@
 <template>
-  <div class="game-wrapper">
-    <div v-if="game.$state.paused" class="pause-overlay">
-      <p class="pause-overlay-hint">Paused</p>
+  <div class="wrapper">
+    <div v-if="game.paused || game.over" class="pause-overlay">
+      <p class="pause-overlay-hint">{{ game.paused ? 'Paused' : 'Game over!'}}</p>
+
+      <button @click="game.paused ? game.continue() : startAgain()">
+        {{ game.paused ? 'Continue' : 'Start again' }}
+      </button>
     </div>
 
-    <div class="weight-info">
-      <div>{{ game.totalWeight.left }}kg</div>
-      <div>{{ game.totalWeight.right }}kg</div>
-    </div>
+    <div class="playground">
+      <div class="weight-info">
+        <div>{{ game.totalWeightBySides.left }}kg</div>
+        <div>{{ game.totalWeightBySides.right }}kg</div>
+      </div>
 
-    <div class="game">
-      <FigureComponent
-        v-for="figure in game.figures"
-        :key="figure.id"
-        :ref="figure.isSettled ? 'whatever' : 'activeFigure'"
-        :shape="figure.shape"
-        :color="figure.color"
-        :weight="figure.weight"
-        :style="getFigureStyleString(figure)"
-      />
+      <div class="game">
+        <FigureComponent
+          v-for="figure in game.figures"
+          :key="figure.id"
+          :ref="figure.isSettled ? 'whatever' : 'activeFigureRef'"
+          :figure="figure"
+          :style="getFigureStyleString(figure)"
+        />
 
-      <TeeterTotter
-        ref="teeterTotter"
-        :bend-degree="0"
-        :bend-side="'left'"
-      />
+        <TeeterTotter>
+          <div ref="platformRef"></div>
+        </TeeterTotter>
+      </div>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import { useKeydownEvent } from '../composables/useKeydownEvent';
 import { useGameStore } from '../store/game';
-import TeeterTotter from './TeeterTotter.vue';
-import FigureComponent from './Figure.vue';
 import { isFigureSettled } from "../helpers/isFigureSettled"
 
-import { Figure } from "../types"
+import TeeterTotter from './TeeterTotter.vue';
+import FigureComponent from './Figure.vue';
+
+import { Figure } from "../classes/figure"
 
 const game = useGameStore()
-const teeterTotter = ref<InstanceType<typeof TeeterTotter>>()
-const activeFigure = ref<InstanceType<typeof FigureComponent>[]>([])
+
+const activeFigureRef = ref<InstanceType<typeof FigureComponent>[]>([])
+const platformRef = ref<HTMLElement>()
 
 game.start()
 
+function startAgain() {
+  game.$reset()
+  game.start()
+}
+
 const getFigureStyleString = (figure: Figure) => {
-  return `position: absolute; left: ${figure.x}%; top: ${figure.y}px; transition: all 0.5s; z-index: 5`
+  return figure.isSettled
+    ? `position: absolute; bottom: 100%; left: ${figure.x}px`
+    : `position: absolute; left: ${figure.x}px; top: ${figure.y}px; transition: all 0.5s; z-index: 5`
 }
 
 useKeydownEvent((e: KeyboardEvent) => {
@@ -59,17 +70,25 @@ onMounted(() => {
   game.$onAction((action) => {
     if (action.name !== 'moveFigureByY') return
 
-    if (isFigureSettled(activeFigure.value[0].$el, teeterTotter.value?.$el)) {
+    if (isFigureSettled(activeFigureRef.value[0].$el, platformRef.value || null, game.totalBendAngle)) {
       game.settleActiveFigure()
+      platformRef.value?.appendChild(activeFigureRef.value[0].$el)
     }
+  })
+
+  game.$subscribe(() => {
+    if (game.isOver) game.stop()
   })
 })
 </script>
 
 <style scoped>
-.game-wrapper {
+.wrapper {
   padding: 20px;
   border: 1px solid gray;
+}
+
+.playground {
   height: 500px;
   position: relative;
 }
@@ -93,8 +112,10 @@ onMounted(() => {
   left: 0;
   width: 100%;
   height: 100%;
+  z-index: 10;
   background-color: rgba(0,0,0,0.3);
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
 }
@@ -104,5 +125,4 @@ onMounted(() => {
   font-size: 20px;
   color: white;
 }
-
 </style>

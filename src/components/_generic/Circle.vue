@@ -8,10 +8,11 @@ import { rand } from '../../helpers/rand';
 
 const props = defineProps<{
   color?: string
+  size: number
 }>()
 
 const _color = computed(() => props.color || 'red')
-const size = computed(() => `${rand(30, 50)}px`)
+const size = computed(() => `${props.size}px`)
 </script>
 
 <style scoped>

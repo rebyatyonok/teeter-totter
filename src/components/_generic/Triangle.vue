@@ -4,15 +4,15 @@
 
 <script lang="ts" setup>
 import { computed } from 'vue'
-import { rand } from '../../helpers/rand';
 
 const props = defineProps<{
   color?: string
+  width: number
 }>()
-const size = rand(50, 100)
+
 const _color = computed(() => props.color || 'red')
-const width = computed(() => `${size}px`)
-const height = computed(() => `${size / 2}px`)
+const width = computed(() => `${props.width}px`)
+const height = computed(() => `${props.width / 2}px`)
 </script>
 
 <style scoped>

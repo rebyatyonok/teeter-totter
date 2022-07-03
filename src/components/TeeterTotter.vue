@@ -1,28 +1,27 @@
 <template>
   <div class="teeter-totter">
-    <div class="beam"></div>
+    <div class="beam">
+      <!-- slot for settled figures -->
+      <slot></slot>
+    </div>
 
-    <TriangleVue />
+    <TriangleVue :width="100"/>
   </div>
 </template>
 
 <script lang="ts" setup>
+import { computed } from 'vue';
 import TriangleVue from './_generic/Triangle.vue';
 import { useConfigStore } from '../store/config';
-import { computed } from 'vue';
+import { useGameStore } from '../store/game';
+import { metersToPixels } from '../helpers/metersToPx'
 
 const config = useConfigStore()
-const props = defineProps<{
-  bendSide: 'left' | 'right',
-  bendDegree: number,
-}>()
+const game = useGameStore()
 
-
-const width = computed(() => `${config.beamWidth * 80}px`)
-const rotation = computed(() => {
-  const degree = Math.floor(props.bendDegree || 0 / 3);
-  return `${props.bendSide === 'right' ? '' : '-'}${degree}deg`
-})
+const width = computed(() => `${config.teeterTotterWidthInPx}px`)
+const height = computed(() => `${config.teeterTotterHeightInPx}px`)
+const rotation = computed(() => `${game.totalBendAngle}deg`)
 </script>
 
 <style scoped>
@@ -33,9 +32,10 @@ const rotation = computed(() => {
 }
 
 .beam {
-  height: 10px;
+  height: v-bind(height);
   width: v-bind(width);
   background: brown;
   transform: rotate(v-bind(rotation));
+  transition: all 0.2s;
 }
 </style>
