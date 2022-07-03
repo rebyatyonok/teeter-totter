@@ -2,6 +2,7 @@ import { defineStore } from "pinia";
 import { fromScaleToScale } from "../helpers/fromScaleToScale";
 import { Figure } from "../classes/figure";
 import { useConfigStore } from "./config";
+import { KEY_LEFT, KEY_RIGHT } from "../constants";
 
 type GameState = {
   paused: boolean,
@@ -101,9 +102,9 @@ export const useGameStore = defineStore('game', {
 
       if (!this.movementInterval || this.figures[this.activeFigureId].side === 'right') return
 
-      if (e.code === 'KeyD') {
+      if (e.code === KEY_RIGHT) {
         this.moveFigureByX(this.activeFigureId, config.horizontalSpeed)
-      } else if (e.code === 'KeyA') {
+      } else if (e.code === KEY_LEFT) {
         this.moveFigureByX(this.activeFigureId, -config.horizontalSpeed)
       }
     },

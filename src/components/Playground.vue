@@ -3,7 +3,7 @@
     <div v-if="game.paused || game.over" class="pause-overlay">
       <p class="pause-overlay-hint">{{ game.paused ? 'Paused' : 'Game over!'}}</p>
 
-      <button @click="game.paused ? game.continue() : startAgain()">
+      <button @click="game.paused ? game.continue() : restart()">
         {{ game.paused ? 'Continue' : 'Start again' }}
       </button>
     </div>
@@ -41,18 +41,19 @@ import TeeterTotter from './TeeterTotter.vue';
 import FigureComponent from './Figure.vue';
 
 import { Figure } from "../classes/figure"
+import { KEY_PAUSE } from '../constants';
 
 const game = useGameStore()
 
 const activeFigureRef = ref<InstanceType<typeof FigureComponent>[]>([])
 const platformRef = ref<HTMLElement>()
 
-game.start()
-
-function startAgain() {
+function restart() {
   game.$reset()
   game.start()
 }
+
+restart()
 
 const getFigureStyleString = (figure: Figure) => {
   return figure.isSettled
@@ -61,7 +62,7 @@ const getFigureStyleString = (figure: Figure) => {
 }
 
 useKeydownEvent((e: KeyboardEvent) => {
-  if (e.code === 'Space') {
+  if (e.code === KEY_PAUSE) {
     game.paused ? game.continue() : game.pause()
   }
 })
