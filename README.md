@@ -1,16 +1,29 @@
-# Vue 3 + TypeScript + Vite
+# Teeter totter game
 
-This template should help get you started developing with Vue 3 and TypeScript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+This is a game where you should balance a teeter totter. On the right side figures with different weight randomly fall,
+on the left side you can position figure to balance the platform.
 
-## Recommended IDE Setup
+## General overview & thoughts
 
-- [VS Code](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar)
+* Here used Vue 3 + Typescript + Pinia for state management.
+* The game logic is located mostly in the `store/game.ts`, but DOM-related code as well as some general (stop, pause, continue) is in the `components/Playground.vue`.
+* Common types located in the `types` folder, but local ones are placed in dedicated files.
+* General idea is to get profit from default browser behavior without caring to much about *real* physics
 
-## Type Support For `.vue` Imports in TS
+## Some ideas for improvement
 
-Since TypeScript cannot handle type information for `.vue` imports, they are shimmed to be a generic Vue component type by default. In most cases this is fine if you don't really care about component prop types outside of templates. However, if you wish to get actual prop types in `.vue` imports (for example to get props validation when using manual `h(...)` calls), you can enable Volar's Take Over mode by following these steps:
+- [ ] Add more precise function to calculate intersection
+- [ ] Add intersetion logic for figures
+- [ ] User configuration
+- [x] Better animation (rn transition is used, it seems laggy a bit)
+- [x] Horizontal movement need some adjustmens & improvements
 
-1. Run `Extensions: Show Built-in Extensions` from VS Code's command palette, look for `TypeScript and JavaScript Language Features`, then right click and select `Disable (Workspace)`. By default, Take Over mode will enable itself if the default TypeScript extension is disabled.
-2. Reload the VS Code window by running `Developer: Reload Window` from the command palette.
+## Build steps
 
-You can learn more about Take Over mode [here](https://github.com/johnsoncodehk/volar/discussions/471).
+They are pretty default
+
+```
+npm i
+npm run dev
+```
+
