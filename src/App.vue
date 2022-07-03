@@ -10,7 +10,7 @@ import { ref } from 'vue';
 import Playground from './components/Playground.vue';
 import RulesModal from './components/RulesModal.vue';
 
-const areRulesRead = ref(true)
+const areRulesRead = ref(false)
 
 const markRulesRead = () => {
   areRulesRead.value = true

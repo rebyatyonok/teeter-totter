@@ -1,7 +1,11 @@
 <template>
   <dialog open class="dialog" ref="dialog">
     <form method="dialog" class="form">
-      <p class="text">Some rules here</p>
+      <p class="text">Use A and D keys to move figure on the left side. On the right side figures will fall randomly</p>
+
+      <p class="text">Game will be over when bend angle is too big or there is 20 extra kg on one of the sides</p>
+
+      <p class="text">Press Space to pause the game</p>
 
       <button class="button" @click="$emit('close')">Ok, got it</button>
     </form>
