@@ -110,9 +110,11 @@ export const useGameStore = defineStore('game', {
     },
 
     startMovement() {
+      const config = useConfigStore()
+
       this.movementInterval = setInterval(() => {
-        this.moveFigureByY(this.activeFigureId, 5)
-      }, 100)
+        this.moveFigureByY(this.activeFigureId, config.verticalSpeed)
+      }, 10)
     },
 
     start() {
@@ -123,12 +125,16 @@ export const useGameStore = defineStore('game', {
     },
 
     settleActiveFigure() {
+      const config = useConfigStore()
       const activeFigure = this.figures[this.activeFigureId]
       activeFigure.isSettled = true
 
       this.addFigure(new Figure(activeFigure.side === 'left' ? 'right' : 'left'))
 
-      return activeFigure
+      // definitely can be a better place for it
+      if (config.verticalSpeedIncrease) {
+        config.verticalSpeed += 0.2
+      }
     },
 
     pause() {

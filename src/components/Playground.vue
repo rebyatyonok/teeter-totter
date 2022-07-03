@@ -35,7 +35,8 @@
 import { onMounted, ref, watch } from 'vue';
 import { useKeydownEvent } from '../composables/useKeydownEvent';
 import { useGameStore } from '../store/game';
-import { isFigureSettled } from "../helpers/isFigureSettled"
+import { useConfigStore } from '../store/config'
+import { isIntersectsPlatform } from "../helpers/isIntersectsPlatform"
 
 import TeeterTotter from './TeeterTotter.vue';
 import FigureComponent from './Figure.vue';
@@ -49,16 +50,20 @@ const activeFigureRef = ref<InstanceType<typeof FigureComponent>[]>([])
 const platformRef = ref<HTMLElement>()
 
 function restart() {
+  const config = useConfigStore()
+
+  config.$reset()
   game.$reset()
   game.start()
 }
 
+// we can use it to start the game
 restart()
 
 const getFigureStyleString = (figure: Figure) => {
   return figure.isSettled
     ? `position: absolute; bottom: 100%; left: ${figure.x}px`
-    : `position: absolute; left: ${figure.x}px; top: ${figure.y}px; transition: all 0.5s; z-index: 5`
+    : `position: absolute; left: ${figure.x}px; top: ${figure.y}px; z-index: 5`
 }
 
 useKeydownEvent((e: KeyboardEvent) => {
@@ -71,7 +76,7 @@ onMounted(() => {
   game.$onAction((action) => {
     if (action.name !== 'moveFigureByY') return
 
-    if (isFigureSettled(activeFigureRef.value[0].$el, platformRef.value || null, game.totalBendAngle)) {
+    if (isIntersectsPlatform(activeFigureRef.value[0].$el, platformRef.value || null, game.totalBendAngle)) {
       game.settleActiveFigure()
       platformRef.value?.appendChild(activeFigureRef.value[0].$el)
     }

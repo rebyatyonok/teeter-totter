@@ -33,9 +33,11 @@ export type Config = {
   horizontalSpeed: number
 
   verticalSpeed: number
+
+  verticalSpeedIncrease: boolean
 }
 
-const DEFAULTS: Config = {
+const getDefaultConfig: () => Config = () => ({
   tetterTotter: {
     platformWidth: 10,
     platformHeight: 0.1,
@@ -47,11 +49,12 @@ const DEFAULTS: Config = {
   maxBendPercentage: 30,
   maxExtraWeight: 20,
   horizontalSpeed: 5,
-  verticalSpeed: 5,
-}
+  verticalSpeed: 1,
+  verticalSpeedIncrease: true,
+})
 
 export const useConfigStore = defineStore('config', {
-  state: (): Config => (DEFAULTS),
+  state: (): Config => (getDefaultConfig()),
   getters: {
     teeterTotterWidthInPx: (state): number => {
       return metersToPixels(state.tetterTotter.platformWidth)
