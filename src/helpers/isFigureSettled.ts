@@ -13,18 +13,13 @@ export function isFigureSettled(figure: HTMLElement | null, beam: HTMLElement | 
 		const isLeft = parseInt(figure.style.left) < beam.offsetWidth / 2
 
 		const shouldAddFigureWidth = isLeft ? angle < 0 : angle > 0
-		const distanceFromPivot = parseInt(shouldAddFigureWidth ? figure.style.left + figure.offsetWidth : figure.style.left) - beam.offsetWidth / 2
+		const left = parseInt(shouldAddFigureWidth ? figure.style.left + figure.offsetWidth : figure.style.left)
 
 		// second side is amount of pixels to add/substract
-		let delta = Math.abs(Math.abs(distanceFromPivot) * Math.tan(angle * Math.PI / 180))
+		let delta = Math.abs(Math.abs(angle > 0 ? left : beamRect.right - left) * Math.tan(angle * Math.PI / 180))
 
-		// for left/right side delta is opposite and depends on the angle
-		if (isLeft) {
-			delta = angle > 0 ? delta : -delta
-		} else {
-			delta = angle > 0 ? -delta : delta
-		}
-
+		// because the beamRect.top is always the highest point (by look, by value it's always smallest)
+		// we need always add delta and never substract
 		return figureRect.bottom >= (beamRect.top + delta)
 	} else {
 		return figureRect.bottom >= beamRect.top
